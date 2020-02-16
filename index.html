@@ -35,6 +35,8 @@
                     $sent.html('Pings sent: ' + pingSent);
                     console.log(data);
                 });
+
+                socket.emit('pong', 'HI SERVER');
                
             });
 
@@ -47,7 +49,7 @@
                 }
                
             });
-    
+
             socket.on('userDisconnected', (data) => {
                 addItemToList(data.username + ' Left!');  
             });

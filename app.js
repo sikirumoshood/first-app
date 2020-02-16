@@ -16,6 +16,10 @@ io.sockets.on('connection', (socket) => {
 		done('ACK');
 	});
 
+	socket.on('pong', (data) => {
+		console.log('CLIENT SAYS: ', data);
+	});
+
 	socket.on('disconnect', () => {
 		socket.broadcast.emit('userDisconnected', { username: socket.username });
 	});
