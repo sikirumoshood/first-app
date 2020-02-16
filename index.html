@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Ping Pong</title>
+        <script type="text/javascript" src="socket.io.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.js"></script>
+    </head>
+    <body>
+
+        <input type="text" id="username">
+        <button id="ping">Ping</button>
+        <div id="sent"></div>
+        <ul id="info"></ul>
+        <!-- -----------------------------SCRIPTS-------------------------------------------------------------- -->
+        <script>
+            //io is available globally from the socket.io.js package loaded at the top
+            let socket = io.connect('http://localhost:4000');
+            let pingSent = 0,
+            $username = $('#username'),
+            $ping = $('#ping'),
+            $info = $('#info');
+            $sent = $('#sent');
+
+            $username.on('change', () => {
+                socket.emit('join', {username: $username.val()});
+            });
+
+            socket.on('userJoined', function(data){
+                addItemToList(data.username + ' has joined');
+            });
+
+            $ping.on('click', function(){     
+                socket.emit('ping', {username:$username.val()}, (data) => {
+                    pingSent++;
+                    $sent.html('Pings sent: ' + pingSent);
+                    console.log(data);
+                });
+               
+            });
+
+            socket.on('ping', function(data){
+                if (data.success){
+                        addItemToList(data.username + ' has pinged!');   
+                    }
+                else{
+                    $sent.html(resData.message);
+                }
+               
+            });
+    
+            socket.on('userDisconnected', (data) => {
+                addItemToList(data.username + ' Left!');  
+            });
+
+            function addItemToList(message){
+                $info.append(`<li> ${message} </li>`);
+            }
+            
+        </script>
+    </body>
+</html>
